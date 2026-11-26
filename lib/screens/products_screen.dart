@@ -4,10 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/products_cubit.dart';
 import '../cubit/details_cubit.dart';
+import '../bloc/search_bloc.dart';
 import '../data/product_api.dart';
 import '../widgets/product_tile.dart';
 import 'product_details_screen.dart';
-
+import 'search_screen.dart';
 
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({super.key});
@@ -17,6 +18,25 @@ class ProductsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Catalogue'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Search products',
+            onPressed: () {
+              final api = context.read<ProductApi>();
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider(
+                    create: (_) => SearchBloc(api),
+                    child: const SearchScreen(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: BlocBuilder<ProductsCubit, ProductsState>(
         builder: (context, state) {
