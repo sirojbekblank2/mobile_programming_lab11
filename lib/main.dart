@@ -1,16 +1,39 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'data/product_api.dart';
+import 'cubit/products_cubit.dart';
+import 'screens/products_screen.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const ProductApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class ProductApp extends StatelessWidget {
+  const ProductApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return RepositoryProvider(
+      create: (_) => ProductApi(),
+      dispose: (api) => api.dispose(),
+      child: BlocProvider(
+        create: (context) => ProductsCubit(
+          context.read<ProductApi>(),
+        )..load(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Product Catalogue',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.indigo,
+            ),
+            useMaterial3: true,
+          ),
+          home: const ProductsScreen(),
+        ),
+      ),
     );
   }
 }
